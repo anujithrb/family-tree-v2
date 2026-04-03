@@ -137,6 +137,7 @@ model AdminSession {
 ```prisma
 model Person {
   id         String     @id @default(cuid())
+  profileId  String     @unique // auto-generated from name, user-editable
   name       String     // only required field
   birthYear  Int?
   deathYear  Int?
@@ -151,10 +152,16 @@ model Person {
 
 **Key rules:**
 - `name` is the only required field. A tree can be created with just names and relationships.
+- `profileId` is required and auto-generated from name at creation (e.g., `"Arjun Rajan"` → `"arjun.rajan"`). If taken, appends numeric suffix (`"arjun.rajan.1"`, `"arjun.rajan.2"`). Registered users can update their own profileId (validated for uniqueness and format: lowercase alphanumeric + dots/underscores). Used for search, disambiguation, and cross-community linking.
 - `isDeceased` is independent of `deathYear`. A person can be marked deceased without knowing the death year.
 - `deathYear` present implies deceased, but not vice versa.
 - If a `User` is linked, the User's `displayName` and `profilePhoto` take precedence for display.
 - `deathYear` is always admin-controlled (even for registered users).
+
+**Display disambiguation in lists/dropdowns:**
+- Primary: `Name (@profileId)` — always available since profileId is required
+- Fallback context: `Name (@profileId, b. 1960)` — when additional context helps
+- Cross-community: `Name (@profileId) — Community Name`
 
 ### 3.4 Community & Tree Structure Layer
 
@@ -198,14 +205,17 @@ model TreeNode {
 }
 
 model Couple {
-  id          String        @id @default(cuid())
-  communityId String
-  community   Community     @relation(fields: [communityId], references: [id])
-  spouse1Id   String        @unique
-  spouse1     TreeNode      @relation("Spouse1", fields: [spouse1Id], references: [id])
-  spouse2Id   String        @unique
-  spouse2     TreeNode      @relation("Spouse2", fields: [spouse2Id], references: [id])
-  children    CoupleChild[]
+  id           String        @id @default(cuid())
+  communityId  String
+  community    Community     @relation(fields: [communityId], references: [id])
+  spouse1Id    String        @unique
+  spouse1      TreeNode      @relation("Spouse1", fields: [spouse1Id], references: [id])
+  spouse2Id    String        @unique
+  spouse2      TreeNode      @relation("Spouse2", fields: [spouse2Id], references: [id])
+  marriageDate DateTime?
+  divorceDate  DateTime?
+  status       String        @default("married") // "married" | "divorced" | "widowed" | "separated" — independent of dates, can be set without marriageDate/divorceDate
+  children     CoupleChild[]
 }
 
 model CoupleChild {
@@ -396,20 +406,98 @@ TOTP follows RFC 6238. Works with any standard authenticator app.
 
 ### 5.3 Admin Server Endpoints
 
+**Auth & self-management:**
+
 | Method | Endpoint | Purpose |
 |--------|----------|---------|
 | POST | `/admin/auth/login` | Password + 2FA login |
 | POST | `/admin/auth/refresh` | Refresh admin session |
+| GET | `/admin/auth/me` | View own admin profile |
+| PUT | `/admin/auth/me` | Update own profile (name, email, password) |
+| POST | `/admin/auth/2fa/setup` | Generate OTP secret + QR code |
+| POST | `/admin/auth/2fa/verify` | Verify OTP code and enable 2FA |
+| DELETE | `/admin/auth/2fa` | Disable 2FA |
+
+**Back-office admin management (super admin only):**
+
+| Method | Endpoint | Purpose |
+|--------|----------|---------|
+| GET | `/admin/admins` | List all back-office admins |
+| POST | `/admin/admins` | Create new back-office admin |
+| PUT | `/admin/admins/:id` | Update back-office admin |
+| DELETE | `/admin/admins/:id` | Remove back-office admin |
+
+**Community management:**
+
+| Method | Endpoint | Purpose |
+|--------|----------|---------|
 | GET | `/admin/communities` | List all communities |
+| GET | `/admin/communities/:id` | View community details |
 | POST | `/admin/communities` | Create community (assign admin from nodes) |
+| PUT | `/admin/communities/:id` | Update community (name, settings) |
 | DELETE | `/admin/communities/:id` | Delete community |
 | PUT | `/admin/communities/:id/admins` | Assign/remove community admins |
-| GET | `/admin/users` | List all users |
+
+**Tree operations (mirrors API server — no membership check, actions logged as actorType: "admin"):**
+
+| Method | Endpoint | Purpose |
+|--------|----------|---------|
+| GET | `/admin/communities/:id/tree` | View any community's tree |
+| POST | `/admin/communities/:id/tree/add-spouse` | Add spouse to any community |
+| POST | `/admin/communities/:id/tree/add-child` | Add child to any community |
+| POST | `/admin/communities/:id/tree/add-parents` | Add parents in any community |
+| POST | `/admin/communities/:id/tree/add-sibling` | Add sibling in any community |
+| PUT | `/admin/communities/:id/tree/nodes/:nodeId` | Edit any node |
+| DELETE | `/admin/communities/:id/tree/nodes/:nodeId` | Remove any node |
+
+**User management:**
+
+| Method | Endpoint | Purpose |
+|--------|----------|---------|
+| GET | `/admin/users` | List all users (with filters) |
+| GET | `/admin/users/:id` | View user details + their communities |
 | POST | `/admin/users/invite` | Send user invite |
-| PUT | `/admin/users/:id` | Update/deactivate user |
+| PUT | `/admin/users/:id` | Update user (email, displayName, status) |
+| DELETE | `/admin/users/:id` | Delete user |
+
+**Person management:**
+
+| Method | Endpoint | Purpose |
+|--------|----------|---------|
+| GET | `/admin/persons` | List all persons (with filters) |
+| GET | `/admin/persons/:id` | View person details + their tree nodes |
+| PUT | `/admin/persons/:id` | Edit any person's data |
+
+**Cross-community links:**
+
+| Method | Endpoint | Purpose |
+|--------|----------|---------|
+| GET | `/admin/links` | List all cross-community links |
 | POST | `/admin/links` | Create approved link directly |
 | PUT | `/admin/links/:id` | Override link status |
-| GET | `/admin/audit` | View action logs |
+| DELETE | `/admin/links/:id` | Remove a link |
+
+**Audit & dashboard:**
+
+| Method | Endpoint | Purpose |
+|--------|----------|---------|
+| GET | `/admin/dashboard` | Platform stats (community count, user count, pending links) |
+| GET | `/admin/audit` | View action logs (filterable by actor, action type, date range) |
+
+**Shared business logic:** Tree operations (add-spouse, add-child, add-parents, add-sibling, remove-node, edit-node) share the same service logic between API and Admin servers. The difference is auth guards (User JWT vs AdminUser JWT), scope (membership-restricted vs unrestricted), and audit logging (actorType "user" vs "admin").
+
+### 5.4 Permissions Matrix
+
+| Data | Back-office admin | Community admin | Registered user (self) |
+|------|-------------------|-----------------|----------------------|
+| **Person fields** (name, birthYear, gender, profileId) | Edit any Person | Edit any Person in their community | Edit their own Person |
+| **Person deceased/deathYear** | Edit any | Edit any in their community | Cannot edit (admin-only) |
+| **User fields** (email, displayName, profilePhoto, status) | Edit any User | Cannot edit Users | Edit their own User |
+| **AdminUser fields** | Edit (self + other admins) | No access | No access |
+| **Couple fields** (status, dates) | Edit any | Edit any in their community | Cannot edit |
+| **Tree structure** (add/remove nodes) | Edit any community | Edit their own community | Cannot edit |
+| **Community settings** | Edit any | Edit their own | Cannot edit |
+| **Cross-community links** | Create/approve/reject any | Request/approve for their community | Cannot manage |
 
 ### 5.4 Key API Behaviors
 
@@ -770,12 +858,13 @@ Kubernetes for auto-scaling, multi-region, and zero-downtime deployments when ne
 
 ### 13.3 Data Model Extensions
 
-- `marriageDate` / `divorceDate` / `marriageStatus` on Couple (for multiple marriages)
 - `relationshipType` on CoupleChild (for adoption/step-parent modeling)
 - Gender field expansion beyond "M"/"F"
 - User-level privacy controls (users decide what personal data to share)
+- Cross-community subtree sharing — community admins grant linked communities visibility into specific subtrees or nodes (e.g., shared ancestors). Visibility is **per-link, directional** — a community can share full data with a bloodline-linked community (siblings' families) while sharing only names with a marriage-linked community (in-laws). Each community independently controls what it shares with each linked community.
 - Data request mechanism (request phone/email from cross-community members)
 - Birth order editing (reorder siblings by sortOrder)
+- Cousin marriages — cross-subtree marriage rendering with special connectors (schema already supports it, layout needs adaptation)
 
 ### 13.4 Performance
 
