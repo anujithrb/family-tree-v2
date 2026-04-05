@@ -9,7 +9,7 @@ export class UsersController {
 
   @Get('me')
   async getProfile(@CurrentUser() user: RequestUser) {
-    return this.usersService.getProfile(user.userId);
+    return this.usersService.getProfile(user.id);
   }
 
   @Put('me')
@@ -17,6 +17,6 @@ export class UsersController {
     @CurrentUser() user: RequestUser,
     @Body() dto: UpdateUserDto,
   ) {
-    return this.usersService.updateProfile(user.userId, dto);
+    return this.usersService.updateProfile(user.id, dto);
   }
 }
