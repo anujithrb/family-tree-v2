@@ -1,0 +1,183 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================
+// Authentication & Identity Layer
+// ============================================================
+
+model User {
+  id              String           @id @default(cuid())
+  email           String           @unique
+  displayName     String
+  profilePhoto    String?
+  status          String           @default("invited") // "invited" | "active"
+  createdAt       DateTime         @default(now())
+  person          Person?
+  magicLinks      MagicLink[]
+  sessions        Session[]
+  communityAdmins CommunityAdmin[]
+}
+
+model MagicLink {
+  id        String    @id @default(cuid())
+  token     String    @unique
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  refreshToken String   @unique
+  deviceInfo   String?
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+}
+
+// ============================================================
+// Back-Office Admin (Separate from User)
+// ============================================================
+
+model AdminUser {
+  id           String         @id @default(cuid())
+  email        String         @unique
+  name         String
+  passwordHash String
+  otpSecret    String?
+  otpEnabled   Boolean        @default(false)
+  createdAt    DateTime       @default(now())
+  sessions     AdminSession[]
+}
+
+model AdminSession {
+  id           String    @id @default(cuid())
+  adminUserId  String
+  adminUser    AdminUser @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+  refreshToken String    @unique
+  deviceInfo   String?
+  expiresAt    DateTime
+  createdAt    DateTime  @default(now())
+}
+
+// ============================================================
+// Global Identity Layer
+// ============================================================
+
+model Person {
+  id         String     @id @default(cuid())
+  profileId  String     @unique
+  name       String
+  birthYear  Int?
+  deathYear  Int?
+  isDeceased Boolean    @default(false)
+  gender     String?    // "M" | "F" | null
+  userId     String?    @unique
+  user       User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+  treeNodes  TreeNode[]
+  createdAt  DateTime   @default(now())
+}
+
+// ============================================================
+// Community & Tree Structure Layer
+// ============================================================
+
+model Community {
+  id        String           @id @default(cuid())
+  name      String
+  createdAt DateTime         @default(now())
+  treeNodes TreeNode[]
+  couples   Couple[]
+  admins    CommunityAdmin[]
+}
+
+model CommunityAdmin {
+  id          String    @id @default(cuid())
+  communityId String
+  community   Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role        String    @default("primary") // "primary" | "secondary"
+  treeNodeId  String    @unique
+  treeNode    TreeNode  @relation(fields: [treeNodeId], references: [id], onDelete: Cascade)
+
+  @@unique([communityId, userId])
+}
+
+model TreeNode {
+  id              String              @id @default(cuid())
+  communityId     String
+  community       Community           @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  personId        String
+  person          Person              @relation(fields: [personId], references: [id], onDelete: Cascade)
+  spouse1In       Couple?             @relation("Spouse1")
+  spouse2In       Couple?             @relation("Spouse2")
+  childIn         CoupleChild[]
+  adminOf         CommunityAdmin?
+  crossLinks      CrossCommunityLink[] @relation("LinkSideA")
+  crossLinkedFrom CrossCommunityLink[] @relation("LinkSideB")
+  createdAt       DateTime            @default(now())
+
+  @@unique([communityId, personId])
+}
+
+model Couple {
+  id           String        @id @default(cuid())
+  communityId  String
+  community    Community     @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  spouse1Id    String        @unique
+  spouse1      TreeNode      @relation("Spouse1", fields: [spouse1Id], references: [id], onDelete: Cascade)
+  spouse2Id    String        @unique
+  spouse2      TreeNode      @relation("Spouse2", fields: [spouse2Id], references: [id], onDelete: Cascade)
+  marriageDate DateTime?
+  divorceDate  DateTime?
+  status       String        @default("married") // "married" | "divorced" | "widowed" | "separated"
+  children     CoupleChild[]
+  createdAt    DateTime      @default(now())
+}
+
+model CoupleChild {
+  coupleId  String
+  couple    Couple   @relation(fields: [coupleId], references: [id], onDelete: Cascade)
+  childId   String
+  child     TreeNode @relation(fields: [childId], references: [id], onDelete: Cascade)
+  sortOrder Int      @default(0)
+
+  @@id([coupleId, childId])
+}
+
+// ============================================================
+// Cross-Community Layer
+// ============================================================
+
+model CrossCommunityLink {
+  id          String                     @id @default(cuid())
+  treeNodeAId String
+  treeNodeA   TreeNode                   @relation("LinkSideA", fields: [treeNodeAId], references: [id], onDelete: Cascade)
+  treeNodeBId String
+  treeNodeB   TreeNode                   @relation("LinkSideB", fields: [treeNodeBId], references: [id], onDelete: Cascade)
+  status      String                     @default("pending") // "pending" | "approved" | "rejected"
+  createdAt   DateTime                   @default(now())
+  actions     CrossCommunityLinkAction[]
+
+  @@unique([treeNodeAId, treeNodeBId])
+}
+
+model CrossCommunityLinkAction {
+  id        String             @id @default(cuid())
+  linkId    String
+  link      CrossCommunityLink @relation(fields: [linkId], references: [id], onDelete: Cascade)
+  action    String             // "requested" | "approved" | "rejected"
+  actorType String             // "user" | "admin"
+  actorId   String
+  createdAt DateTime           @default(now())
+}

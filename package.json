@@ -1,0 +1,14 @@
+{
+  "name": "family-tree-v2",
+  "private": true,
+  "scripts": {
+    "api": "pnpm --filter @family-tree/api run start:dev",
+    "admin": "pnpm --filter @family-tree/admin run start:dev",
+    "db:generate": "pnpm --filter @family-tree/database run generate",
+    "db:migrate": "pnpm --filter @family-tree/database run migrate",
+    "db:seed": "pnpm --filter @family-tree/database run seed",
+    "db:studio": "pnpm --filter @family-tree/database run studio",
+    "test": "pnpm -r run test",
+    "build": "pnpm -r run build"
+  }
+}

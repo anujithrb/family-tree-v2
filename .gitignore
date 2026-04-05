@@ -1,0 +1,24 @@
+node_modules/
+dist/
+.env
+*.js.map
+*.d.ts
+!tsconfig.base.json
+
+# Prisma
+packages/database/prisma/migrations/**/migration_lock.toml
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Uploads
+uploads/
+
+# Superpowers
+.superpowers/
