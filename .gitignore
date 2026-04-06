@@ -22,3 +22,7 @@ uploads/
 
 # Superpowers
 .superpowers/
+
+# Angular
+.angular/
+.vitest/
