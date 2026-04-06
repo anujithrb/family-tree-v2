@@ -13,7 +13,9 @@
     "format": "prettier --write \"apps/web-user/**/*.{ts,html,scss,json}\" \"apps/web-admin/**/*.{ts,html,scss,json}\" \"packages/shared-ui/**/*.{ts,scss,json}\"",
     "format:check": "prettier --check \"apps/web-user/**/*.{ts,html,scss,json}\" \"apps/web-admin/**/*.{ts,html,scss,json}\" \"packages/shared-ui/**/*.{ts,scss,json}\"",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "stylelint": "stylelint \"apps/web-user/**/*.scss\" \"apps/web-admin/**/*.scss\" \"packages/shared-ui/**/*.scss\"",
+    "stylelint:fix": "stylelint --fix \"apps/web-user/**/*.scss\" \"apps/web-admin/**/*.scss\" \"packages/shared-ui/**/*.scss\""
   },
   "devDependencies": {
     "@angular-eslint/eslint-plugin": "^21.3.1",
@@ -23,6 +25,9 @@
     "angular-eslint": "^21.3.1",
     "eslint": "^10.2.0",
     "prettier": "^3.8.1",
+    "stylelint": "^17.6.0",
+    "stylelint-config-standard-scss": "^17.0.0",
+    "stylelint-order": "^8.1.1",
     "typescript-eslint": "^8.58.0"
   }
 }

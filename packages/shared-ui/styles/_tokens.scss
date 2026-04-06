@@ -2,9 +2,9 @@
 
 :root {
   // Surface
-  --ft-bg-primary: #ffffff;
+  --ft-bg-primary: #fff;
   --ft-bg-secondary: #f5f5f7;
-  --ft-bg-elevated: #ffffff;
+  --ft-bg-elevated: #fff;
 
   // Text
   --ft-text-primary: #1a1a1a;
@@ -28,7 +28,7 @@
   --ft-radius-sm: 4px;
   --ft-radius-md: 8px;
   --ft-radius-lg: 16px;
-  --ft-shadow-panel: 0 2px 12px rgba(0, 0, 0, 0.08);
+  --ft-shadow-panel: 0 2px 12px rgb(0 0 0 / 8%);
 
   // Spacing scale (4px base)
   --ft-space-xs: 4px;
@@ -53,5 +53,5 @@
   --ft-text-primary: #f0f0f0;
   --ft-text-secondary: #9a9a9a;
   --ft-border: #2e3040;
-  --ft-shadow-panel: 0 2px 12px rgba(0, 0, 0, 0.3);
+  --ft-shadow-panel: 0 2px 12px rgb(0 0 0 / 30%);
 }

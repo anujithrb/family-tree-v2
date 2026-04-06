@@ -8,31 +8,31 @@ $breakpoints: (
 );
 
 @mixin mobile {
-  @media (max-width: 767px) {
+  @media (width <= 767px) {
     @content;
   }
 }
 
 @mixin tablet {
-  @media (min-width: 768px) and (max-width: 1023px) {
+  @media (768px <= width <= 1023px) {
     @content;
   }
 }
 
 @mixin tablet-up {
-  @media (min-width: 768px) {
+  @media (width >= 768px) {
     @content;
   }
 }
 
 @mixin desktop {
-  @media (min-width: 1024px) {
+  @media (width >= 1024px) {
     @content;
   }
 }
 
 @mixin wide {
-  @media (min-width: 1440px) {
+  @media (width >= 1440px) {
     @content;
   }
 }

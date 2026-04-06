@@ -12,9 +12,10 @@
 
 html,
 body {
+  background: var(--ft-bg-primary);
+  color: var(--ft-text-primary);
+  font-family: var(--ft-font-family);
   height: 100%;
-  font-family: var(--ft-font-family, system-ui, sans-serif);
-  background: var(--ft-bg-primary, #ffffff);
-  color: var(--ft-text-primary, #1a1a1a);
+  /* stylelint-disable-next-line order/properties-alphabetical-order */
   -webkit-font-smoothing: antialiased;
 }
