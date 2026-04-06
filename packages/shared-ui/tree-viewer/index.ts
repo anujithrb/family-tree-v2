@@ -1,4 +1,5 @@
 export { TreeLayoutService } from './services/tree-layout.service';
+export { TreeCanvasComponent } from './components/tree-canvas/tree-canvas.component';
 export { TreeZoomService, type ZoomTransform } from './services/tree-zoom.service';
 export {
   type LayoutConstants,
