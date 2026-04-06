@@ -3,7 +3,7 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   test: {
     globals: true,
-    environment: 'node',
-    include: ['tree-viewer/**/*.spec.ts'],
+    environment: 'jsdom',
+    include: ['tree-viewer/**/*.spec.ts', 'services/**/*.spec.ts'],
   },
 });
