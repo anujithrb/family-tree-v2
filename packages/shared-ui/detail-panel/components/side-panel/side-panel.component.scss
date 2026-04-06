@@ -1,0 +1,36 @@
+.side-panel {
+  background: var(--ft-bg-elevated);
+  border-left: 1px solid var(--ft-border);
+  box-shadow: var(--ft-shadow-panel);
+  height: 100%;
+  overflow-y: auto;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transform: translateX(100%);
+  transition: transform 0.25s ease;
+  width: 360px;
+  z-index: 10;
+
+  &.open {
+    transform: translateX(0);
+  }
+}
+
+.side-panel-header {
+  display: flex;
+  justify-content: flex-end;
+  padding: var(--ft-space-sm, 8px);
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: var(--ft-text-secondary);
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.side-panel-body {
+  padding: var(--ft-space-md, 16px);
+}

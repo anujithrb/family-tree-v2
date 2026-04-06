@@ -1,0 +1,8 @@
+<div class="bottom-sheet" [class]="state()">
+  <div class="drag-handle" (click)="state() === 'peek' ? onExpand() : onCollapse()">
+    <span class="handle-bar"></span>
+  </div>
+  <div class="sheet-content">
+    <ng-content />
+  </div>
+</div>

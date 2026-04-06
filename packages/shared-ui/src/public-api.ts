@@ -29,3 +29,14 @@ export type {
   UserProfile,
   RelationshipResult,
 } from '../tree-viewer/index';
+
+// Detail panel
+export {
+  SidePanelComponent,
+  BottomSheetComponent,
+  type BottomSheetState,
+  PanelNavigationService,
+  type PanelState,
+  type PanelView,
+  type PanelHistoryEntry,
+} from '../detail-panel/index';

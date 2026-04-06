@@ -1,0 +1,8 @@
+<aside class="side-panel" [class.open]="isOpen()">
+  <div class="side-panel-header">
+    <button type="button" class="close-btn" (click)="onClose()" aria-label="Close panel">×</button>
+  </div>
+  <div class="side-panel-body">
+    <ng-content />
+  </div>
+</aside>
