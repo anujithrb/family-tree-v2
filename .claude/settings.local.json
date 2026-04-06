@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bash \"C:/Users/ACER/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.6/scripts/start-server.sh\" --project-dir \"C:/Users/ACER/Projects/claude/family-tree-v2\")",
+      "Bash(bash \"C:/Users/ACER/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.6/skills/brainstorming/scripts/start-server.sh\" --project-dir \"C:/Users/ACER/Projects/claude/family-tree-v2\")",
+      "Bash(pnpm:*)",
+      "Bash(npm install:*)",
+      "Bash(npx prisma:*)",
+      "Bash(psql -U postgres -c \"SELECT version\\(\\);\")",
+      "Bash(npx jest:*)",
+      "Bash(DATABASE_URL=\"postgresql://postgres:UNAjith%40123@localhost:5432/family_tree_v2?schema=public\" npx prisma db seed)",
+      "Bash(cmd //c \"taskkill /F /PID 10932\")",
+      "Bash(cmd //c \"taskkill /F /PID 22720\")",
+      "Bash(npx tsc:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(node -e \"require\\('bcrypt'\\); console.log\\('bcrypt works'\\)\")",
+      "Bash(node -e \"require\\('C:/Users/ACER/Projects/claude/family-tree-v2/apps/admin/node_modules/bcryptjs'\\); console.log\\('bcryptjs works'\\)\")",
+      "Bash(node:*)",
+      "WebSearch",
+      "Bash(bash:*)",
+      "Bash(break)",
+      "Bash(npm -v)",
+      "Bash(ng version:*)",
+      "Bash(npx @angular/cli version)",
+      "mcp__plugin_context7_context7__resolve-library-id",
+      "mcp__plugin_context7_context7__query-docs"
+    ]
+  }
+}

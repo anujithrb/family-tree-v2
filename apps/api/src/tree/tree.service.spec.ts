@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TreeService } from './tree.service';
-import { PrismaService } from '@family-tree/database';
+import { PrismaService, TreeOperationsService } from '@family-tree/database';
 
 describe('TreeService', () => {
   let service: TreeService;
@@ -41,6 +41,7 @@ describe('TreeService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         TreeService,
+        TreeOperationsService,
         { provide: PrismaService, useValue: prisma },
       ],
     }).compile();

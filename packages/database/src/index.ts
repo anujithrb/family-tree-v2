@@ -6,3 +6,4 @@ export { computeBloodlineStatus } from './bloodline';
 export type { BloodlineInput, BloodlineResult } from './bloodline';
 export { computeTreeLayout } from './tree-layout';
 export type { LayoutConstants, LayoutCouple, TreeLayoutResult } from './tree-layout';
+export { TreeOperationsService } from './tree-operations.service';

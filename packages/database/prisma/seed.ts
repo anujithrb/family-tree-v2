@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { generateProfileId } from '../src/profile-id';
+import * as bcryptjs from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
@@ -12,15 +13,14 @@ async function main() {
   console.log('Seeding database...');
 
   // Create back-office admin (password: "admin123" — dev only)
-  // This is a placeholder hash. The real bcrypt hashing is implemented in Plan 2 (Auth).
-  // For seed purposes, this value will be replaced when the admin auth module is built.
+  const passwordHash = await bcryptjs.hash('admin123', 12);
   const adminUser = await prisma.adminUser.upsert({
     where: { email: 'admin@familytree.local' },
     update: {},
     create: {
       email: 'admin@familytree.local',
       name: 'Platform Admin',
-      passwordHash: 'placeholder-will-be-replaced-by-auth-plan',
+      passwordHash,
       otpEnabled: false,
     },
   });
