@@ -1,0 +1,18 @@
+// Global styles for web-admin app
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+  font-family: var(--ft-font-family, system-ui, sans-serif);
+  background: var(--ft-bg-primary, #ffffff);
+  color: var(--ft-text-primary, #1a1a1a);
+  -webkit-font-smoothing: antialiased;
+}
