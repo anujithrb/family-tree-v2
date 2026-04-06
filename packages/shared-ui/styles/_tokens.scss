@@ -1,0 +1,57 @@
+// Design tokens — CSS custom properties as single source of truth.
+
+:root {
+  // Surface
+  --ft-bg-primary: #ffffff;
+  --ft-bg-secondary: #f5f5f7;
+  --ft-bg-elevated: #ffffff;
+
+  // Text
+  --ft-text-primary: #1a1a1a;
+  --ft-text-secondary: #6b6b6b;
+
+  // Gender accents
+  --ft-male-fill: #1e3a5f;
+  --ft-male-stroke: #2a5fa0;
+  --ft-male-avatar: #2a5fa0;
+  --ft-female-fill: #3d1f2e;
+  --ft-female-stroke: #a04a6a;
+  --ft-female-avatar: #a04a6a;
+
+  // Interactive
+  --ft-accent: #2a5fa0;
+  --ft-accent-hover: #1e4a8a;
+  --ft-danger: #d94040;
+
+  // Borders, shadows, radii
+  --ft-border: #e0e0e0;
+  --ft-radius-sm: 4px;
+  --ft-radius-md: 8px;
+  --ft-radius-lg: 16px;
+  --ft-shadow-panel: 0 2px 12px rgba(0, 0, 0, 0.08);
+
+  // Spacing scale (4px base)
+  --ft-space-xs: 4px;
+  --ft-space-sm: 8px;
+  --ft-space-md: 16px;
+  --ft-space-lg: 24px;
+  --ft-space-xl: 32px;
+  --ft-space-2xl: 48px;
+
+  // Typography
+  --ft-font-family: 'Inter', system-ui, sans-serif;
+  --ft-font-size-sm: 0.75rem;
+  --ft-font-size-md: 0.875rem;
+  --ft-font-size-lg: 1rem;
+  --ft-font-size-xl: 1.25rem;
+}
+
+[data-theme='dark'] {
+  --ft-bg-primary: #0f1117;
+  --ft-bg-secondary: #1a1c24;
+  --ft-bg-elevated: #22242e;
+  --ft-text-primary: #f0f0f0;
+  --ft-text-secondary: #9a9a9a;
+  --ft-border: #2e3040;
+  --ft-shadow-panel: 0 2px 12px rgba(0, 0, 0, 0.3);
+}

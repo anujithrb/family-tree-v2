@@ -1,0 +1,15 @@
+// Theme application — import this in each app's global styles.
+
+@use 'tokens';
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --ft-bg-primary: #0f1117;
+    --ft-bg-secondary: #1a1c24;
+    --ft-bg-elevated: #22242e;
+    --ft-text-primary: #f0f0f0;
+    --ft-text-secondary: #9a9a9a;
+    --ft-border: #2e3040;
+    --ft-shadow-panel: 0 2px 12px rgba(0, 0, 0, 0.3);
+  }
+}
