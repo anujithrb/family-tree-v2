@@ -15,15 +15,41 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "stylelint": "stylelint \"apps/web-user/**/*.scss\" \"apps/web-admin/**/*.scss\" \"packages/shared-ui/**/*.scss\"",
-    "stylelint:fix": "stylelint --fix \"apps/web-user/**/*.scss\" \"apps/web-admin/**/*.scss\" \"packages/shared-ui/**/*.scss\""
+    "stylelint:fix": "stylelint --fix \"apps/web-user/**/*.scss\" \"apps/web-admin/**/*.scss\" \"packages/shared-ui/**/*.scss\"",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "apps/web-user/**/*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "apps/web-admin/**/*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "packages/shared-ui/**/*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "**/*.{html,json,md}": [
+      "prettier --write"
+    ],
+    "**/*.scss": [
+      "stylelint --fix",
+      "prettier --write"
+    ]
   },
   "devDependencies": {
     "@angular-eslint/eslint-plugin": "^21.3.1",
     "@angular-eslint/eslint-plugin-template": "^21.3.1",
     "@angular-eslint/template-parser": "^21.3.1",
+    "@commitlint/cli": "^20.5.0",
+    "@commitlint/config-conventional": "^20.5.0",
     "@eslint/js": "^10.0.1",
     "angular-eslint": "^21.3.1",
     "eslint": "^10.2.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
     "prettier": "^3.8.1",
     "stylelint": "^17.6.0",
     "stylelint-config-standard-scss": "^17.0.0",
