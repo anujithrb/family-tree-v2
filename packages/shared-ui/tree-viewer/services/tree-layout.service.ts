@@ -19,8 +19,7 @@ export class TreeLayoutService {
     personCoupleMap: Record<string, string>,
     constants: LayoutConstants = DEFAULT_LAYOUT_CONSTANTS,
   ): TreeLayoutResult {
-    const { nodeWidth, nodeHeight, spouseGap, subtreeGap, rowHeight, padding } =
-      constants;
+    const { nodeWidth, nodeHeight, spouseGap, subtreeGap, rowHeight, padding } = constants;
     const coupleWidth = nodeWidth * 2 + spouseGap;
 
     if (couples.length === 0) {
@@ -28,7 +27,7 @@ export class TreeLayoutService {
     }
 
     // Build internal map
-    const coupleById: Record<string, InternalCouple> = {};
+    const coupleById: Partial<Record<string, InternalCouple>> = {};
     for (const c of couples) {
       coupleById[c.id] = { ...c, gen: -1, subtreeWidth: 0, cx: 0 };
     }
@@ -39,14 +38,10 @@ export class TreeLayoutService {
     const queue: InternalCouple[] = [root];
 
     while (queue.length > 0) {
-      const couple = queue.shift()!;
+      const couple = queue.shift() as InternalCouple;
       for (const childId of couple.children) {
         const childCoupleId = personCoupleMap[childId];
-        if (
-          childCoupleId &&
-          coupleById[childCoupleId] &&
-          coupleById[childCoupleId].gen === -1
-        ) {
+        if (childCoupleId && coupleById[childCoupleId] && coupleById[childCoupleId].gen === -1) {
           coupleById[childCoupleId].gen = couple.gen + 1;
           queue.push(coupleById[childCoupleId]);
         }
@@ -61,9 +56,7 @@ export class TreeLayoutService {
     );
 
     for (let gen = maxGen; gen >= 0; gen--) {
-      const genCouples = Object.values(coupleById).filter(
-        (c) => c.gen === gen,
-      );
+      const genCouples = Object.values(coupleById).filter((c) => c.gen === gen);
 
       for (const couple of genCouples) {
         const childCouples = couple.children
@@ -72,13 +65,8 @@ export class TreeLayoutService {
           .map((cpId) => coupleById[cpId])
           .filter(Boolean);
 
-        const soloCount = couple.children.filter(
-          (cid) => !personCoupleMap[cid],
-        ).length;
-        const soloWidth =
-          soloCount > 0
-            ? soloCount * nodeWidth + (soloCount - 1) * subtreeGap
-            : 0;
+        const soloCount = couple.children.filter((cid) => !personCoupleMap[cid]).length;
+        const soloWidth = soloCount > 0 ? soloCount * nodeWidth + (soloCount - 1) * subtreeGap : 0;
 
         if (childCouples.length === 0) {
           couple.subtreeWidth = Math.max(coupleWidth, soloWidth || coupleWidth);
@@ -97,7 +85,7 @@ export class TreeLayoutService {
     const soloNodes: Record<string, SoloNodeLayout> = {};
 
     while (posQueue.length > 0) {
-      const couple = posQueue.shift()!;
+      const couple = posQueue.shift() as InternalCouple;
 
       const childCouples = couple.children
         .map((cid) => personCoupleMap[cid])
@@ -120,8 +108,7 @@ export class TreeLayoutService {
       // Position solo leaf children
       const soloIds = couple.children.filter((cid) => !personCoupleMap[cid]);
       if (soloIds.length > 0) {
-        const totalW =
-          soloIds.length * nodeWidth + (soloIds.length - 1) * subtreeGap;
+        const totalW = soloIds.length * nodeWidth + (soloIds.length - 1) * subtreeGap;
         let x = couple.cx - totalW / 2;
         for (const nodeId of soloIds) {
           soloNodes[nodeId] = {

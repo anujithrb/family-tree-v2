@@ -53,6 +53,9 @@ module.exports = tseslint.config(
       'apps/api/',
       'apps/admin/',
       'packages/database/',
+      '.superpowers/',
+      '.claude/',
+      'docs/',
     ],
   },
 );

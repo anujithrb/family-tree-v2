@@ -75,9 +75,7 @@ describe('TreeLayoutService', () => {
       rowHeight: 200,
       padding: 50,
     };
-    const couples: LayoutCouple[] = [
-      { id: 'c1', spouseAId: 'nA', spouseBId: 'nB', children: [] },
-    ];
+    const couples: LayoutCouple[] = [{ id: 'c1', spouseAId: 'nA', spouseBId: 'nB', children: [] }];
 
     const result = service.computeLayout(couples, {}, custom);
 
