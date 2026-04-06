@@ -9,6 +9,8 @@
   "devDependencies": {
     "@angular/common": "^21.0.0",
     "@angular/core": "^21.0.0",
+    "d3-selection": "^3.0.0",
+    "d3-zoom": "^3.0.0",
     "ng-packagr": "^21.0.0",
     "typescript": "~5.9.0",
     "vitest": "^4.1.2"
