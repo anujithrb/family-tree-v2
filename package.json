@@ -9,6 +9,20 @@
     "db:seed": "pnpm --filter @family-tree/database run seed",
     "db:studio": "pnpm --filter @family-tree/database run studio",
     "test": "pnpm -r run test",
-    "build": "pnpm -r run build"
+    "build": "pnpm -r run build",
+    "format": "prettier --write \"apps/web-user/**/*.{ts,html,scss,json}\" \"apps/web-admin/**/*.{ts,html,scss,json}\" \"packages/shared-ui/**/*.{ts,scss,json}\"",
+    "format:check": "prettier --check \"apps/web-user/**/*.{ts,html,scss,json}\" \"apps/web-admin/**/*.{ts,html,scss,json}\" \"packages/shared-ui/**/*.{ts,scss,json}\"",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "devDependencies": {
+    "@angular-eslint/eslint-plugin": "^21.3.1",
+    "@angular-eslint/eslint-plugin-template": "^21.3.1",
+    "@angular-eslint/template-parser": "^21.3.1",
+    "@eslint/js": "^10.0.1",
+    "angular-eslint": "^21.3.1",
+    "eslint": "^10.2.0",
+    "prettier": "^3.8.1",
+    "typescript-eslint": "^8.58.0"
   }
 }
