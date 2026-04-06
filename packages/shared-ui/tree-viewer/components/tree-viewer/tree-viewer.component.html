@@ -1,0 +1,24 @@
+<div class="tree-viewer-container">
+  <svg
+    #svgElement
+    class="tree-svg"
+    tabindex="0"
+    (click)="onSvgClick($event)"
+    (keydown.escape)="emptyClicked.emit()"
+  >
+    <svg:rect class="tree-bg" width="100%" height="100%" fill="transparent" />
+    <svg:g #contentElement>
+      <ft-tree-canvas
+        [treeData]="treeData()"
+        [selectedNodeId]="selectedNodeId()"
+        (nodeSelected)="onNodeSelected($event)"
+      />
+    </svg:g>
+  </svg>
+
+  <div class="zoom-controls">
+    <button type="button" (click)="zoomIn()" aria-label="Zoom in">+</button>
+    <button type="button" (click)="zoomOut()" aria-label="Zoom out">−</button>
+    <button type="button" (click)="fitToScreen()" aria-label="Fit to screen">⊡</button>
+  </div>
+</div>

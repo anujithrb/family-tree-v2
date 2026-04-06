@@ -1,10 +1,16 @@
 // @family-tree/shared-ui public API
-// Exports are added as components and services are built.
 
 export { ThemeService, type Theme } from '../services/theme.service';
 
+// Tree viewer
 export {
+  TreeViewerComponent,
+  TreeCanvasComponent,
+  PersonCardComponent,
+  TreeConnectorComponent,
   TreeLayoutService,
+  TreeZoomService,
+  type ZoomTransform,
   type LayoutConstants,
   DEFAULT_LAYOUT_CONSTANTS,
   type LayoutCouple,
@@ -12,6 +18,7 @@ export {
   type SoloNodeLayout,
   type TreeLayoutResult,
 } from '../tree-viewer/index';
+
 export type {
   TreePerson,
   TreeCouple,

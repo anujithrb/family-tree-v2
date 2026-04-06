@@ -36,8 +36,7 @@ export class TreeZoomService {
     ]).then(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ([d3zoom, d3sel]: [any, any]) => {
-        // eslint-disable max-len, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+        /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
         const z = d3zoom
           .zoom()
           .scaleExtent([0.1, 3])
@@ -47,15 +46,13 @@ export class TreeZoomService {
               const { x, y, k } = event.transform;
               this._transform = { x, y, k };
               this.notify();
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
               d3sel.select(contentElement).attr('transform', event.transform.toString());
             },
           );
 
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         this.zoomBehavior = z;
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
         d3sel.select(svgElement).call(z);
+        /* eslint-enable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
       },
     );
   }
@@ -73,6 +70,35 @@ export class TreeZoomService {
       ([d3zoom, d3sel]: [any, any]) => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
         d3sel.select(svgElement).call(this.zoomBehavior.transform, d3zoom.zoomIdentity);
+      },
+    );
+  }
+
+  zoomIn(svgElement: SVGSVGElement): void {
+    if (!this.zoomBehavior) return;
+    const { x, y, k } = this._transform;
+    this._applyTransform(svgElement, x, y, Math.min(k * 1.25, 3));
+  }
+
+  zoomOut(svgElement: SVGSVGElement): void {
+    if (!this.zoomBehavior) return;
+    const { x, y, k } = this._transform;
+    this._applyTransform(svgElement, x, y, Math.max(k * 0.8, 0.1));
+  }
+
+  private _applyTransform(svgElement: SVGSVGElement, x: number, y: number, k: number): void {
+    void Promise.all([
+      // @ts-expect-error - d3-zoom is loaded dynamically at runtime
+      import(/* @vite-ignore */ 'd3-zoom'),
+      // @ts-expect-error - d3-selection is loaded dynamically at runtime
+      import(/* @vite-ignore */ 'd3-selection'),
+    ]).then(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ([d3zoom, d3sel]: [any, any]) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
+        const newTransform = d3zoom.zoomIdentity.translate(x, y).scale(k);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+        d3sel.select(svgElement).call(this.zoomBehavior.transform, newTransform);
       },
     );
   }

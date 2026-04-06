@@ -1,0 +1,51 @@
+@use 'breakpoints' as *;
+
+.tree-viewer-container {
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.tree-svg {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+.zoom-controls {
+  bottom: var(--ft-space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ft-space-xs);
+  position: absolute;
+  right: var(--ft-space-md);
+
+  button {
+    align-items: center;
+    background: var(--ft-bg-elevated);
+    border: 1px solid var(--ft-border);
+    border-radius: var(--ft-radius-sm);
+    color: var(--ft-text-primary);
+    cursor: pointer;
+    display: flex;
+    font-size: 18px;
+    height: 36px;
+    justify-content: center;
+    width: 36px;
+
+    &:hover {
+      background: var(--ft-bg-secondary);
+    }
+
+    @include mobile {
+      height: 32px;
+      width: 32px;
+    }
+  }
+
+  @include mobile {
+    bottom: var(--ft-space-sm);
+    right: var(--ft-space-sm);
+  }
+}
