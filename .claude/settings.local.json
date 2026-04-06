@@ -31,7 +31,10 @@
       "Bash(ls /c/Users/ACER/Projects/claude/family-tree-v2/apps/web-user/dist/web-user/browser/*.css)",
       "Bash(xargs grep:*)",
       "Bash(npx vitest:*)",
-      "Bash(npx husky:*)"
+      "Bash(npx husky:*)",
+      "Bash(git merge:*)",
+      "Bash(git stash:*)",
+      "Bash(ls apps/web-user/src/app/*.ts)"
     ]
   }
 }

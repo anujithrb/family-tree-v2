@@ -1,4 +1,5 @@
 export { TreeLayoutService } from './services/tree-layout.service';
+export { TreeZoomService, type ZoomTransform } from './services/tree-zoom.service';
 export {
   type LayoutConstants,
   DEFAULT_LAYOUT_CONSTANTS,

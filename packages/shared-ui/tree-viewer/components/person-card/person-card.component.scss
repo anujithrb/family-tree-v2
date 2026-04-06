@@ -1,0 +1,36 @@
+.card-bg {
+  fill: var(--ft-bg-elevated);
+  stroke: var(--ft-border);
+  stroke-width: 1;
+}
+
+.person-card {
+  &.male .card-bg {
+    stroke: var(--ft-male-stroke);
+  }
+
+  &.female .card-bg {
+    stroke: var(--ft-female-stroke);
+  }
+
+  &.deceased {
+    opacity: 0.6;
+  }
+}
+
+.avatar-placeholder {
+  fill: var(--ft-border);
+}
+
+.person-name {
+  dominant-baseline: middle;
+  fill: var(--ft-text-primary);
+  font-size: var(--ft-font-size-md);
+  font-weight: 600;
+}
+
+.person-years {
+  dominant-baseline: middle;
+  fill: var(--ft-text-secondary);
+  font-size: var(--ft-font-size-sm);
+}

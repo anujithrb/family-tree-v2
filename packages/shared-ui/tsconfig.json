@@ -7,5 +7,12 @@
     "lib": ["es2022", "dom"],
     "types": ["vitest/globals"]
   },
-  "include": ["src/**/*.ts", "services/**/*.ts", "tree-viewer/**/*.ts", "vitest.config.ts"]
+  "include": [
+    "src/**/*.ts",
+    "services/**/*.ts",
+    "tree-viewer/**/*.ts",
+    "detail-panel/**/*.ts",
+    "wizard/**/*.ts",
+    "vitest.config.ts"
+  ]
 }

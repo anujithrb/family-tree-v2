@@ -33,7 +33,7 @@ export class TreeLayoutService {
     }
 
     // Phase 1: Generation assignment (BFS from root = first couple)
-    const root = coupleById[couples[0].id];
+    const root = coupleById[couples[0].id] as InternalCouple;
     root.gen = 0;
     const queue: InternalCouple[] = [root];
 
@@ -51,19 +51,22 @@ export class TreeLayoutService {
     // Phase 2: Subtree widths (bottom-up)
     const maxGen = Math.max(
       ...Object.values(coupleById)
+        .filter((c): c is InternalCouple => !!c)
         .map((c) => c.gen)
         .filter((g) => g >= 0),
     );
 
     for (let gen = maxGen; gen >= 0; gen--) {
-      const genCouples = Object.values(coupleById).filter((c) => c.gen === gen);
+      const genCouples = Object.values(coupleById).filter(
+        (c): c is InternalCouple => !!c && c.gen === gen,
+      );
 
       for (const couple of genCouples) {
         const childCouples = couple.children
           .map((cid) => personCoupleMap[cid])
-          .filter(Boolean)
+          .filter((cpId): cpId is string => Boolean(cpId))
           .map((cpId) => coupleById[cpId])
-          .filter(Boolean);
+          .filter((cc): cc is InternalCouple => Boolean(cc));
 
         const soloCount = couple.children.filter((cid) => !personCoupleMap[cid]).length;
         const soloWidth = soloCount > 0 ? soloCount * nodeWidth + (soloCount - 1) * subtreeGap : 0;
@@ -89,9 +92,9 @@ export class TreeLayoutService {
 
       const childCouples = couple.children
         .map((cid) => personCoupleMap[cid])
-        .filter(Boolean)
+        .filter((cpId): cpId is string => Boolean(cpId))
         .map((cpId) => coupleById[cpId])
-        .filter(Boolean);
+        .filter((cc): cc is InternalCouple => Boolean(cc));
 
       if (childCouples.length > 0) {
         const totalW =
@@ -124,7 +127,7 @@ export class TreeLayoutService {
     // Phase 4: Build result
     const coupleLayouts: Record<string, CoupleLayout> = {};
     for (const c of Object.values(coupleById)) {
-      if (c.gen < 0) continue;
+      if (!c || c.gen < 0) continue;
       coupleLayouts[c.id] = {
         gen: c.gen,
         subtreeWidth: c.subtreeWidth,
