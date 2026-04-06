@@ -7,3 +7,13 @@ export {
   type SoloNodeLayout,
   type TreeLayoutResult,
 } from './models/tree-layout.model';
+export type {
+  TreePerson,
+  TreeCouple,
+  TreeResponse,
+  Community,
+  CommunityDetail,
+  CommunityAdmin,
+  UserProfile,
+  RelationshipResult,
+} from './models/tree-data.model';

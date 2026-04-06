@@ -12,3 +12,13 @@ export {
   type SoloNodeLayout,
   type TreeLayoutResult,
 } from '../tree-viewer/index';
+export type {
+  TreePerson,
+  TreeCouple,
+  TreeResponse,
+  Community,
+  CommunityDetail,
+  CommunityAdmin,
+  UserProfile,
+  RelationshipResult,
+} from '../tree-viewer/index';
