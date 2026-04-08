@@ -1,0 +1,33 @@
+<div class="wizard-review">
+  <h2>Review</h2>
+
+  <div class="review-section">
+    <h3>Community Name</h3>
+    <p class="community-name">{{ state().communityName() }}</p>
+  </div>
+
+  <div class="review-section">
+    <h3>People ({{ state().nodes().length }})</h3>
+    <ul class="node-list">
+      @for (node of state().nodes(); track node.tempId) {
+        <li class="node-item">
+          <span>{{ node.name }}</span>
+          @if (node.isSelf) {
+            <span class="you-badge">You</span>
+          }
+        </li>
+      }
+    </ul>
+  </div>
+
+  @if (state().couples().length > 0) {
+    <div class="review-section">
+      <h3>Couples ({{ state().couples().length }})</h3>
+    </div>
+  }
+
+  <div class="nav-actions">
+    <button type="button" class="back-btn" (click)="back.emit()">Back</button>
+    <button type="button" class="submit-btn" (click)="submit.emit()">Create Community</button>
+  </div>
+</div>

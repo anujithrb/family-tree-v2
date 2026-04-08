@@ -1,0 +1,25 @@
+<div class="node-actions">
+  <span class="node-label">{{ node().name }}</span>
+
+  @if (canAddSpouse()) {
+    <button type="button" data-action="add-spouse" (click)="addSpouse.emit()">Add Spouse</button>
+  }
+
+  @if (canAddChild()) {
+    <button type="button" data-action="add-child" (click)="addChild.emit()">Add Child</button>
+  }
+
+  @if (canAddSibling()) {
+    <button type="button" data-action="add-sibling" (click)="addSibling.emit()">Add Sibling</button>
+  }
+
+  @if (canAddParents()) {
+    <button type="button" data-action="add-parents" (click)="addParents.emit()">Add Parents</button>
+  }
+
+  @if (canRemove()) {
+    <button type="button" data-action="remove" class="remove-btn" (click)="remove.emit()">
+      Remove
+    </button>
+  }
+</div>

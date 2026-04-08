@@ -1,0 +1,30 @@
+<div class="wizard-shell">
+  <div class="step-indicator">
+    <span [class.active]="state.currentStep() === 1" [class.done]="state.currentStep() > 1">1</span>
+    <span [class.active]="state.currentStep() === 2" [class.done]="state.currentStep() > 2">2</span>
+    <span [class.active]="state.currentStep() === 3">3</span>
+  </div>
+
+  <div class="wizard-content">
+    @switch (state.currentStep()) {
+      @case (1) {
+        <ft-wizard-step-name
+          [name]="state.communityName()"
+          (nameChange)="onNameChange($event)"
+          (next)="onNext()"
+        />
+      }
+      @case (2) {
+        <ft-wizard-tree-builder [state]="state" (back)="onBack()" (next)="onNext()" />
+      }
+      @case (3) {
+        <ft-wizard-review
+          [state]="state"
+          [showAdminAssignment]="config().showAdminAssignment"
+          (back)="onBack()"
+          (submit)="onSubmit()"
+        />
+      }
+    }
+  </div>
+</div>

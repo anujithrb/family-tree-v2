@@ -1,0 +1,45 @@
+<div class="wizard-tree-builder">
+  <h2>Build Your Family Tree</h2>
+  <p class="step-description">
+    Click a person to select them, then use the actions to add family members.
+  </p>
+
+  <div class="nodes-grid">
+    @for (node of state().nodes(); track node.tempId) {
+      <div
+        class="node-card"
+        [class.selected]="selectedNodeId() === node.tempId"
+        (click)="selectNode(node.tempId)"
+        role="button"
+        tabindex="0"
+        (keydown.enter)="selectNode(node.tempId)"
+        (keydown.space)="$event.preventDefault(); selectNode(node.tempId)"
+      >
+        <span class="node-name">{{ node.name }}</span>
+        @if (node.isSelf) {
+          <span class="you-badge">(You)</span>
+        }
+      </div>
+    }
+
+    @if (state().nodes().length === 0) {
+      <p class="empty-message">No people added yet.</p>
+    }
+  </div>
+
+  @if (selectedNode()) {
+    <ft-wizard-node-actions
+      [node]="selectedNode()!"
+      (addSpouse)="onAddSpouse()"
+      (addChild)="onAddChild()"
+      (addSibling)="onAddSibling()"
+      (addParents)="onAddParents()"
+      (remove)="onRemoveNode()"
+    />
+  }
+
+  <div class="nav-actions">
+    <button type="button" class="back-btn" (click)="back.emit()">Back</button>
+    <button type="button" class="next-btn" (click)="next.emit()">Next</button>
+  </div>
+</div>

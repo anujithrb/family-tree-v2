@@ -1,0 +1,45 @@
+.wizard-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.step-indicator {
+  align-items: center;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+
+  span {
+    align-items: center;
+    background: var(--ft-bg-elevated);
+    border: 2px solid var(--ft-border);
+    border-radius: 50%;
+    color: var(--ft-text-secondary);
+    display: flex;
+    font-size: 0.875rem;
+    font-weight: 600;
+    height: 2rem;
+    justify-content: center;
+    transition:
+      background 0.2s,
+      color 0.2s;
+    width: 2rem;
+
+    &.active {
+      background: var(--ft-primary);
+      border-color: var(--ft-primary);
+      color: var(--ft-on-primary);
+    }
+
+    &.done {
+      background: var(--ft-primary-muted);
+      border-color: var(--ft-primary-muted);
+      color: var(--ft-primary);
+    }
+  }
+}
+
+.wizard-content {
+  width: 100%;
+}

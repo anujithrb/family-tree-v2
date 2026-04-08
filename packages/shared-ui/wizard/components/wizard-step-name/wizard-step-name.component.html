@@ -1,0 +1,24 @@
+<div class="wizard-step-name">
+  <h2>Community Name</h2>
+  <p class="step-description">
+    Give your family community a name. This is typically your family surname.
+  </p>
+
+  <form (ngSubmit)="onSubmit()" class="name-form">
+    <div class="field">
+      <label for="community-name">Community Name</label>
+      <input
+        id="community-name"
+        type="text"
+        [value]="name()"
+        (input)="onNameInput($event)"
+        placeholder="e.g. The Smith Family"
+        autocomplete="off"
+      />
+    </div>
+
+    <div class="actions">
+      <button type="submit" [disabled]="!name().trim()">Next</button>
+    </div>
+  </form>
+</div>

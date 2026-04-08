@@ -44,6 +44,11 @@ export {
 
 // Wizard
 export {
+  WizardShellComponent,
+  WizardStepNameComponent,
+  WizardTreeBuilderComponent,
+  WizardReviewComponent,
+  WizardNodeActionsComponent,
   WizardStateService,
   type TempNode,
   type TempCouple,
