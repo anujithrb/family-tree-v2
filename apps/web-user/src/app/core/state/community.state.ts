@@ -1,4 +1,5 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
+import { Observable, tap } from 'rxjs';
 import { CommunityApiService } from '../api/community-api.service';
 import type { Community } from '@family-tree/shared-ui';
 
@@ -15,20 +16,22 @@ export class CommunityState {
     return this.communities().find((c) => c.id === id) ?? null;
   });
 
-  loadCommunities(): void {
+  loadCommunities(): Observable<Community[]> {
     this.loading.set(true);
-    this.communityApi.getMyCommunities().subscribe({
-      next: (list) => {
-        this.communities.set(list);
-        if (list.length > 0 && !this.activeId()) {
-          this.activeId.set(list[0].id);
-        }
-        this.loading.set(false);
-      },
-      error: () => {
-        this.loading.set(false);
-      },
-    });
+    return this.communityApi.getMyCommunities().pipe(
+      tap({
+        next: (list) => {
+          this.communities.set(list);
+          if (list.length > 0 && !this.activeId()) {
+            this.activeId.set(list[0].id);
+          }
+          this.loading.set(false);
+        },
+        error: () => {
+          this.loading.set(false);
+        },
+      }),
+    );
   }
 
   setActive(communityId: string): void {

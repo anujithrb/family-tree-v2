@@ -1,0 +1,15 @@
+.tree-page {
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.loading,
+.error {
+  align-items: center;
+  color: var(--ft-text-secondary);
+  display: flex;
+  height: 100%;
+  justify-content: center;
+}

@@ -30,7 +30,7 @@ describe('CommunityState', () => {
   });
 
   it('should load communities and set first as active', () => {
-    state.loadCommunities();
+    state.loadCommunities().subscribe();
     const req = httpMock.expectOne('/api/communities');
     req.flush([
       { id: 'c1', name: 'First', createdAt: '2026-01-01' },
@@ -41,7 +41,7 @@ describe('CommunityState', () => {
   });
 
   it('should switch active community', () => {
-    state.loadCommunities();
+    state.loadCommunities().subscribe();
     httpMock.expectOne('/api/communities').flush([
       { id: 'c1', name: 'First', createdAt: '2026-01-01' },
       { id: 'c2', name: 'Second', createdAt: '2026-02-01' },

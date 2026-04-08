@@ -1,0 +1,54 @@
+<div class="relationship-page">
+  <h1>Find Relationship</h1>
+
+  <div class="pickers">
+    <div class="picker">
+      <label>From</label>
+      <select (change)="selectFromByIndex($any($event.target).value)">
+        <option value="">-- Select person --</option>
+        @for (p of treeState.treeData()?.people ?? []; track p.nodeId; let i = $index) {
+          <option [value]="i">{{ p.name }}</option>
+        }
+      </select>
+      @if (fromNode()) {
+        <span class="selected-name">{{ fromNode()!.name }}</span>
+      }
+    </div>
+
+    <div class="picker">
+      <label>To</label>
+      <select (change)="selectToByIndex($any($event.target).value)">
+        <option value="">-- Select person --</option>
+        @for (p of treeState.treeData()?.people ?? []; track p.nodeId; let i = $index) {
+          <option [value]="i">{{ p.name }}</option>
+        }
+      </select>
+      @if (toNode()) {
+        <span class="selected-name">{{ toNode()!.name }}</span>
+      }
+    </div>
+  </div>
+
+  <button
+    type="button"
+    [disabled]="!fromNode() || !toNode() || loading()"
+    (click)="findRelationship()"
+  >
+    {{ loading() ? 'Finding...' : 'Find Relationship' }}
+  </button>
+
+  @if (result()) {
+    <div class="result">
+      <p>
+        {{
+          result()!.message ??
+            (result()!.path ? result()!.path!.join(' → ') : 'No relationship found')
+        }}
+      </p>
+    </div>
+  }
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+</div>

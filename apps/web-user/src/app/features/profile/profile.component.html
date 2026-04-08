@@ -1,0 +1,26 @@
+<div class="profile-page">
+  <h1>Profile</h1>
+
+  <form (submit)="$event.preventDefault(); onSave()">
+    <label>
+      Display Name
+      <input
+        type="text"
+        [value]="displayName()"
+        (input)="displayName.set($any($event.target).value)"
+      />
+    </label>
+
+    @if (saved()) {
+      <p class="success">Profile saved!</p>
+    }
+
+    @if (error()) {
+      <p class="error">{{ error() }}</p>
+    }
+
+    <button type="submit" [disabled]="saving()">
+      {{ saving() ? 'Saving...' : 'Save' }}
+    </button>
+  </form>
+</div>

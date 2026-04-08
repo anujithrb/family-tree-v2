@@ -1,0 +1,6 @@
+<div class="wizard-page">
+  @if (error()) {
+    <p class="wizard-error">{{ error() }}</p>
+  }
+  <ft-wizard-shell [config]="wizardConfig()" (submitted)="onSubmit($event)" />
+</div>

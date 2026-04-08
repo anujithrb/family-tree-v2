@@ -1,0 +1,43 @@
+<div class="tree-page">
+  @if (treeState.loading()) {
+    <div class="loading">Loading tree...</div>
+  } @else if (treeState.error()) {
+    <div class="error">{{ treeState.error() }}</div>
+  } @else {
+    @if (treeState.treeData(); as treeData) {
+      <ft-tree-viewer
+        [treeData]="treeData"
+        [selectedNodeId]="treeState.selectedNode()?.nodeId ?? null"
+        (nodeSelected)="onNodeSelected($event)"
+      />
+    }
+
+    @if (treeState.selectedNode()) {
+      <!-- Desktop: side panel -->
+      <ft-side-panel [isOpen]="sidePanelOpen()" (closed)="onPanelClosed()">
+        <ft-panel-content
+          [person]="treeState.selectedNode()!"
+          [mode]="panelMode()"
+          [couples]="treeState.treeData()?.couples ?? []"
+          (modeChange)="onModeChange($event)"
+          (formSubmit)="onFormSubmit($event)"
+          (personNavigate)="onPersonNavigate($event)"
+          (deleteRequested)="onDeleteRequested()"
+        />
+      </ft-side-panel>
+
+      <!-- Mobile: bottom sheet -->
+      <ft-bottom-sheet [state]="bottomSheetState()" (closed)="onPanelClosed()">
+        <ft-panel-content
+          [person]="treeState.selectedNode()!"
+          [mode]="panelMode()"
+          [couples]="treeState.treeData()?.couples ?? []"
+          (modeChange)="onModeChange($event)"
+          (formSubmit)="onFormSubmit($event)"
+          (personNavigate)="onPersonNavigate($event)"
+          (deleteRequested)="onDeleteRequested()"
+        />
+      </ft-bottom-sheet>
+    }
+  }
+</div>

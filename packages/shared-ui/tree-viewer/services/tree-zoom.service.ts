@@ -4,6 +4,10 @@ export interface ZoomTransform {
   k: number;
 }
 
+// Use variable-based imports to prevent static analysis by Vite's import-analysis plugin
+const D3_ZOOM = 'd3-zoom';
+const D3_SELECTION = 'd3-selection';
+
 export class TreeZoomService {
   private _transform: ZoomTransform = { x: 0, y: 0, k: 1 };
   private listeners: Array<(t: ZoomTransform) => void> = [];
@@ -29,10 +33,8 @@ export class TreeZoomService {
 
   initZoom(svgElement: SVGSVGElement, contentElement: SVGGElement): void {
     void Promise.all([
-      // @ts-expect-error - d3-zoom is loaded dynamically at runtime
-      import(/* @vite-ignore */ 'd3-zoom'),
-      // @ts-expect-error - d3-selection is loaded dynamically at runtime
-      import(/* @vite-ignore */ 'd3-selection'),
+      import(/* @vite-ignore */ D3_ZOOM),
+      import(/* @vite-ignore */ D3_SELECTION),
     ]).then(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ([d3zoom, d3sel]: [any, any]) => {
@@ -61,10 +63,8 @@ export class TreeZoomService {
     if (!this.zoomBehavior) return;
 
     void Promise.all([
-      // @ts-expect-error - d3-zoom is loaded dynamically at runtime
-      import(/* @vite-ignore */ 'd3-zoom'),
-      // @ts-expect-error - d3-selection is loaded dynamically at runtime
-      import(/* @vite-ignore */ 'd3-selection'),
+      import(/* @vite-ignore */ D3_ZOOM),
+      import(/* @vite-ignore */ D3_SELECTION),
     ]).then(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ([d3zoom, d3sel]: [any, any]) => {
@@ -88,10 +88,8 @@ export class TreeZoomService {
 
   private _applyTransform(svgElement: SVGSVGElement, x: number, y: number, k: number): void {
     void Promise.all([
-      // @ts-expect-error - d3-zoom is loaded dynamically at runtime
-      import(/* @vite-ignore */ 'd3-zoom'),
-      // @ts-expect-error - d3-selection is loaded dynamically at runtime
-      import(/* @vite-ignore */ 'd3-selection'),
+      import(/* @vite-ignore */ D3_ZOOM),
+      import(/* @vite-ignore */ D3_SELECTION),
     ]).then(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ([d3zoom, d3sel]: [any, any]) => {
