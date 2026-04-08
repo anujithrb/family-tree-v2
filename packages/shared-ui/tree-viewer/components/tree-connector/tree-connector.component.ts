@@ -4,9 +4,9 @@ import { Component, input } from '@angular/core';
   selector: 'ft-tree-connector',
   standalone: true,
   template: `
-    <g class="connector">
+    <svg:g class="connector">
       <!-- Horizontal bar between spouses -->
-      <line
+      <svg:line
         [attr.x1]="spouseAX() + nodeWidth()"
         [attr.y1]="coupleY() + nodeHeight() / 2"
         [attr.x2]="spouseBX()"
@@ -15,7 +15,7 @@ import { Component, input } from '@angular/core';
       />
       @if (hasChildren()) {
         <!-- Vertical drop from couple mid-point -->
-        <line
+        <svg:line
           [attr.x1]="coupleCx()"
           [attr.y1]="coupleY() + nodeHeight() / 2"
           [attr.x2]="coupleCx()"
@@ -23,7 +23,7 @@ import { Component, input } from '@angular/core';
           class="drop-line"
         />
       }
-    </g>
+    </svg:g>
   `,
   styles: [
     `

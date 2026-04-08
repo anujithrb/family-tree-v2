@@ -39,4 +39,5 @@ export {
   type PanelState,
   type PanelView,
   type PanelHistoryEntry,
+  PanelContentComponent,
 } from '../detail-panel/index';
