@@ -1,0 +1,16 @@
+<header class="app-header">
+  <div class="left">
+    <span class="logo desktop-only">FamilyTree</span>
+    <span class="logo mobile-only">FT</span>
+    @if (communityState.communities().length > 1) {
+      <ft-community-switcher />
+    } @else if (communityState.active()) {
+      <span class="community-name">{{ communityState.active()?.name }}</span>
+    }
+  </div>
+  <div class="right">
+    <a routerLink="/profile" class="profile-link" aria-label="Profile">
+      {{ authService.user()?.displayName?.charAt(0) ?? '?' }}
+    </a>
+  </div>
+</header>

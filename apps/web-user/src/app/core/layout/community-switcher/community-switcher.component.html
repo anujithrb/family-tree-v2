@@ -1,0 +1,20 @@
+<div class="switcher">
+  <button type="button" class="current" (click)="toggle()">
+    {{ communityState.active()?.name ?? 'Select' }} ▾
+  </button>
+  @if (isOpen()) {
+    <ul class="dropdown">
+      @for (c of communityState.communities(); track c.id) {
+        <li>
+          <button
+            type="button"
+            [class.active]="c.id === communityState.activeId()"
+            (click)="select(c.id)"
+          >
+            {{ c.name }}
+          </button>
+        </li>
+      }
+    </ul>
+  }
+</div>

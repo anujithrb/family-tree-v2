@@ -1,0 +1,57 @@
+@use 'breakpoints' as *;
+
+.app-header {
+  align-items: center;
+  background: var(--ft-bg-elevated);
+  border-bottom: 1px solid var(--ft-border);
+  display: flex;
+  height: 48px;
+  justify-content: space-between;
+  padding: var(--ft-space-sm) var(--ft-space-md);
+}
+
+.left {
+  align-items: center;
+  display: flex;
+  gap: var(--ft-space-md);
+}
+
+.logo {
+  color: var(--ft-accent);
+  font-weight: 700;
+}
+
+.desktop-only {
+  display: none;
+
+  @include desktop {
+    display: inline;
+  }
+}
+
+.mobile-only {
+  display: inline;
+
+  @include desktop {
+    display: none;
+  }
+}
+
+.community-name {
+  font-size: var(--ft-font-size-md);
+  font-weight: 500;
+}
+
+.profile-link {
+  align-items: center;
+  background: var(--ft-accent);
+  border-radius: 50%;
+  color: var(--ft-text-on-accent);
+  display: flex;
+  font-size: var(--ft-font-size-sm);
+  font-weight: 600;
+  height: 32px;
+  justify-content: center;
+  text-decoration: none;
+  width: 32px;
+}

@@ -1,0 +1,45 @@
+.switcher {
+  position: relative;
+}
+
+.current {
+  background: none;
+  border: none;
+  color: var(--ft-text-primary);
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.dropdown {
+  background: var(--ft-bg-elevated);
+  border: 1px solid var(--ft-border);
+  border-radius: var(--ft-radius-md);
+  box-shadow: var(--ft-shadow-panel);
+  left: 0;
+  list-style: none;
+  min-width: 200px;
+  padding: var(--ft-space-xs) 0;
+  position: absolute;
+  top: 100%;
+  z-index: 100;
+
+  button {
+    background: none;
+    border: none;
+    color: var(--ft-text-primary);
+    cursor: pointer;
+    display: block;
+    padding: var(--ft-space-sm) var(--ft-space-md);
+    text-align: left;
+    width: 100%;
+
+    &:hover {
+      background: var(--ft-bg-secondary);
+    }
+
+    &.active {
+      color: var(--ft-accent);
+      font-weight: 600;
+    }
+  }
+}
