@@ -7,9 +7,10 @@ describe('WizardStateService', () => {
     service = new WizardStateService();
   });
 
-  it('should start on name step', () => {
-    expect(service.step()).toBe('name');
-    expect(service.people()).toHaveLength(0);
+  it('should start on step 1 with no nodes', () => {
+    expect(service.currentStep()).toBe(1);
+    expect(service.nodes()).toHaveLength(0);
+    expect(service.communityName()).toBe('');
   });
 
   it('should set community name', () => {
@@ -17,48 +18,67 @@ describe('WizardStateService', () => {
     expect(service.communityName()).toBe('Smith Family');
   });
 
-  it('should add a person', () => {
-    service.addPerson({ name: 'Alice', gender: 'FEMALE', birthYear: 1980, isDeceased: false });
-    expect(service.people()).toHaveLength(1);
-    expect(service.people()[0].name).toBe('Alice');
+  it('should advance and go back steps', () => {
+    service.nextStep();
+    expect(service.currentStep()).toBe(2);
+    service.nextStep();
+    expect(service.currentStep()).toBe(3);
+    service.prevStep();
+    expect(service.currentStep()).toBe(2);
+  });
+
+  it('should not go below step 1 or above step 3', () => {
+    service.prevStep();
+    expect(service.currentStep()).toBe(1);
+    service.nextStep();
+    service.nextStep();
+    service.nextStep();
+    expect(service.currentStep()).toBe(3);
+  });
+
+  it('should add a node', () => {
+    service.addNode({ tempId: 't1', name: 'Alice', gender: 'F', isSelf: true });
+    expect(service.nodes()).toHaveLength(1);
+    expect(service.nodes()[0].name).toBe('Alice');
   });
 
   it('should add a couple', () => {
-    const a = service.addPerson({
-      name: 'Alice',
-      gender: 'FEMALE',
-      birthYear: null,
-      isDeceased: false,
-    });
-    const b = service.addPerson({
-      name: 'Bob',
-      gender: 'MALE',
-      birthYear: null,
-      isDeceased: false,
-    });
-    service.addCouple(a.tempId, b.tempId);
+    service.addNode({ tempId: 't1', name: 'Alice', gender: 'F' });
+    service.addNode({ tempId: 't2', name: 'Bob', gender: 'M' });
+    service.addCouple('t1', 't2');
     expect(service.couples()).toHaveLength(1);
+    expect(service.couples()[0].spouseAId).toBe('t1');
   });
 
-  it('should delete person and cascade cleanup', () => {
-    const a = service.addPerson({
-      name: 'Alice',
-      gender: null,
-      birthYear: null,
-      isDeceased: false,
-    });
-    const b = service.addPerson({ name: 'Bob', gender: null, birthYear: null, isDeceased: false });
-    service.addCouple(a.tempId, b.tempId);
-    service.deletePerson(a.tempId);
-    expect(service.people()).toHaveLength(1);
+  it('should remove node and cascade cleanup', () => {
+    service.addNode({ tempId: 't1', name: 'Alice', gender: 'F' });
+    service.addNode({ tempId: 't2', name: 'Bob', gender: 'M' });
+    service.addCouple('t1', 't2');
+    service.removeNode('t1');
+    expect(service.nodes()).toHaveLength(1);
     expect(service.couples()).toHaveLength(0);
+  });
+
+  it('should build submission', () => {
+    service.setCommunityName('Test');
+    service.addNode({ tempId: 't1', name: 'Alice', gender: 'F' });
+    const submission = service.buildSubmission();
+    expect(submission.communityName).toBe('Test');
+    expect(submission.nodes).toHaveLength(1);
+  });
+
+  it('should init with config', () => {
+    service.initWithConfig({ selfNode: { name: 'Me', gender: 'M' }, showAdminAssignment: false });
+    expect(service.nodes()).toHaveLength(1);
+    expect(service.nodes()[0].isSelf).toBe(true);
+    expect(service.nodes()[0].name).toBe('Me');
   });
 
   it('should reset state', () => {
     service.setCommunityName('Test');
-    service.addPerson({ name: 'Alice', gender: null, birthYear: null, isDeceased: false });
+    service.addNode({ tempId: 't1', name: 'Alice', gender: 'F' });
     service.reset();
     expect(service.communityName()).toBe('');
-    expect(service.people()).toHaveLength(0);
+    expect(service.nodes()).toHaveLength(0);
   });
 });

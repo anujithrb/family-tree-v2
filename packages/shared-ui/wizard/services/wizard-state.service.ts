@@ -1,86 +1,101 @@
 import { Injectable, signal, computed } from '@angular/core';
 import type {
-  WizardState,
-  WizardStep,
-  WizardPerson,
-  WizardCouple,
-  WizardChild,
+  TempNode,
+  TempCouple,
+  TempChild,
+  WizardConfig,
+  WizardSubmission,
 } from '../models/wizard.model';
 
 @Injectable({ providedIn: 'root' })
 export class WizardStateService {
-  private readonly state = signal<WizardState>({
-    step: 'name',
-    communityName: '',
-    people: [],
-    couples: [],
-    children: [],
-    selectedNodeTempId: null,
-  });
+  private readonly _step = signal(1);
+  private readonly _communityName = signal('');
+  private readonly _nodes = signal<TempNode[]>([]);
+  private readonly _couples = signal<TempCouple[]>([]);
+  private readonly _children = signal<TempChild[]>([]);
 
-  readonly step = computed(() => this.state().step);
-  readonly communityName = computed(() => this.state().communityName);
-  readonly people = computed(() => this.state().people);
-  readonly couples = computed(() => this.state().couples);
-  readonly children = computed(() => this.state().children);
-  readonly selectedNodeTempId = computed(() => this.state().selectedNodeTempId);
+  readonly currentStep = computed(() => this._step());
+  readonly communityName = computed(() => this._communityName());
+  readonly nodes = computed(() => this._nodes());
+  readonly couples = computed(() => this._couples());
+  readonly children = computed(() => this._children());
+
+  initWithConfig(config: WizardConfig): void {
+    this._step.set(1);
+    this._communityName.set('');
+    this._children.set([]);
+    this._couples.set([]);
+    if (config.selfNode) {
+      const self: TempNode = {
+        tempId: 'self',
+        name: config.selfNode.name ?? '',
+        gender: config.selfNode.gender ?? '',
+        birthYear: config.selfNode.birthYear,
+        isSelf: true,
+      };
+      this._nodes.set([self]);
+    } else {
+      this._nodes.set([]);
+    }
+  }
 
   setCommunityName(name: string): void {
-    this.state.update((s) => ({ ...s, communityName: name }));
+    this._communityName.set(name);
   }
 
-  goToStep(step: WizardStep): void {
-    this.state.update((s) => ({ ...s, step }));
+  nextStep(): void {
+    this._step.update((s) => Math.min(s + 1, 3));
   }
 
-  addPerson(person: Omit<WizardPerson, 'tempId'>): WizardPerson {
-    const tempId = `temp-${String(Date.now())}-${Math.random().toString(36).slice(2)}`;
-    const newPerson: WizardPerson = { tempId, ...person };
-    this.state.update((s) => ({ ...s, people: [...s.people, newPerson] }));
-    return newPerson;
+  prevStep(): void {
+    this._step.update((s) => Math.max(s - 1, 1));
   }
 
-  addCouple(personATempId: string, personBTempId: string): WizardCouple {
-    const tempId = `couple-${String(Date.now())}`;
-    const couple: WizardCouple = { tempId, personATempId, personBTempId, status: 'MARRIED' };
-    this.state.update((s) => ({ ...s, couples: [...s.couples, couple] }));
-    return couple;
+  addNode(node: TempNode): void {
+    this._nodes.update((nodes) => {
+      // If node has a tempId already in the list, replace; otherwise add
+      const existing = nodes.findIndex((n) => n.tempId === node.tempId);
+      if (existing >= 0) {
+        const updated = [...nodes];
+        updated[existing] = node;
+        return updated;
+      }
+      return [...nodes, node];
+    });
   }
 
-  addChild(coupleTempId: string, childTempId: string): void {
-    const child: WizardChild = { coupleTempId, childTempId };
-    this.state.update((s) => ({ ...s, children: [...s.children, child] }));
+  addCouple(spouseAId: string, spouseBId: string): void {
+    const id = `couple-${String(Date.now())}`;
+    this._couples.update((c) => [...c, { id, spouseAId, spouseBId }]);
   }
 
-  updatePerson(tempId: string, updates: Partial<Omit<WizardPerson, 'tempId'>>): void {
-    this.state.update((s) => ({
-      ...s,
-      people: s.people.map((p) => (p.tempId === tempId ? { ...p, ...updates } : p)),
-    }));
+  addChild(coupleId: string, childId: string): void {
+    this._children.update((c) => [...c, { coupleId, childId }]);
   }
 
-  deletePerson(tempId: string): void {
-    this.state.update((s) => ({
-      ...s,
-      people: s.people.filter((p) => p.tempId !== tempId),
-      couples: s.couples.filter((c) => c.personATempId !== tempId && c.personBTempId !== tempId),
-      children: s.children.filter((ch) => ch.childTempId !== tempId),
-      selectedNodeTempId: s.selectedNodeTempId === tempId ? null : s.selectedNodeTempId,
-    }));
+  removeNode(tempId: string): void {
+    this._nodes.update((nodes) => nodes.filter((n) => n.tempId !== tempId));
+    this._couples.update((couples) =>
+      couples.filter((c) => c.spouseAId !== tempId && c.spouseBId !== tempId),
+    );
+    this._children.update((children) => children.filter((c) => c.childId !== tempId));
   }
 
-  selectNode(tempId: string | null): void {
-    this.state.update((s) => ({ ...s, selectedNodeTempId: tempId }));
+  buildSubmission(): WizardSubmission {
+    return {
+      communityName: this._communityName(),
+      nodes: this._nodes(),
+      couples: this._couples(),
+      children: this._children(),
+    };
   }
 
   reset(): void {
-    this.state.set({
-      step: 'name',
-      communityName: '',
-      people: [],
-      couples: [],
-      children: [],
-      selectedNodeTempId: null,
-    });
+    this._step.set(1);
+    this._communityName.set('');
+    this._nodes.set([]);
+    this._couples.set([]);
+    this._children.set([]);
   }
 }

@@ -1,8 +1,8 @@
 export { WizardStateService } from './services/wizard-state.service';
 export type {
-  WizardState,
-  WizardStep,
-  WizardPerson,
-  WizardCouple,
-  WizardChild,
+  TempNode,
+  TempCouple,
+  TempChild,
+  WizardConfig,
+  WizardSubmission,
 } from './models/wizard.model';

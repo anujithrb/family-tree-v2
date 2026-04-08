@@ -1,30 +1,32 @@
-export type WizardStep = 'name' | 'tree-builder' | 'review';
-
-export interface WizardPerson {
+export interface TempNode {
   tempId: string;
   name: string;
-  gender: string | null;
-  birthYear: number | null;
-  isDeceased: boolean;
+  gender: 'M' | 'F' | '';
+  birthYear?: number;
+  email?: string;
+  isDeceased?: boolean;
+  isSelf?: boolean;
 }
 
-export interface WizardCouple {
-  tempId: string;
-  personATempId: string;
-  personBTempId: string;
-  status: string;
+export interface TempCouple {
+  id: string;
+  spouseAId: string;
+  spouseBId: string;
 }
 
-export interface WizardChild {
-  coupleTempId: string;
-  childTempId: string;
+export interface TempChild {
+  coupleId: string;
+  childId: string;
 }
 
-export interface WizardState {
-  step: WizardStep;
+export interface WizardConfig {
+  selfNode?: Partial<TempNode>;
+  showAdminAssignment: boolean;
+}
+
+export interface WizardSubmission {
   communityName: string;
-  people: WizardPerson[];
-  couples: WizardCouple[];
-  children: WizardChild[];
-  selectedNodeTempId: string | null;
+  nodes: TempNode[];
+  couples: TempCouple[];
+  children: TempChild[];
 }

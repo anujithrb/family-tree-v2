@@ -41,3 +41,13 @@ export {
   type PanelHistoryEntry,
   PanelContentComponent,
 } from '../detail-panel/index';
+
+// Wizard
+export {
+  WizardStateService,
+  type TempNode,
+  type TempCouple,
+  type TempChild,
+  type WizardConfig,
+  type WizardSubmission,
+} from '../wizard/index';
