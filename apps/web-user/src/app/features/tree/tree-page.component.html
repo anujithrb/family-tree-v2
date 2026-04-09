@@ -1,4 +1,10 @@
 <div class="tree-page">
+  @if (mutationError()) {
+    <div class="mutation-error">
+      {{ mutationError() }}
+      <button type="button" (click)="mutationError.set(null)">Dismiss</button>
+    </div>
+  }
   @if (treeState.loading()) {
     <div class="loading">Loading tree...</div>
   } @else if (treeState.error()) {

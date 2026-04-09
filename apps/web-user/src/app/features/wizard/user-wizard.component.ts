@@ -34,7 +34,7 @@ export class UserWizardComponent {
 
   onSubmit(submission: WizardSubmission): void {
     this.error.set(null);
-    this.communityApi.createCommunity({ name: submission.communityName }).subscribe({
+    this.communityApi.createCommunityWithTree(submission).subscribe({
       next: (community) => {
         this.communityState.setActive(community.id);
         void this.router.navigate(['/communities', community.id, 'tree']);

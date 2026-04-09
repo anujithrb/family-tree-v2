@@ -8,6 +8,7 @@ export default defineConfig({
     // and run in the consuming app's test suite instead
     include: [
       'tree-viewer/services/tree-layout.service.spec.ts',
+      'tree-viewer/services/tree-zoom.service.spec.ts',
       'services/**/*.spec.ts',
       'wizard/services/**/*.spec.ts',
       'detail-panel/services/**/*.spec.ts',

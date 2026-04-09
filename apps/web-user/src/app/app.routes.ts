@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './core/auth/auth.guard';
+import { authGuard, communityMemberGuard } from './core/auth/auth.guard';
+import { communityLandingGuard } from './core/auth/community-landing.guard';
 import { ShellComponent } from './core/layout/shell/shell.component';
 
 export const routes: Routes = [
@@ -25,11 +26,13 @@ export const routes: Routes = [
       },
       {
         path: 'communities/:id/tree',
+        canActivate: [communityMemberGuard],
         loadComponent: () =>
           import('./features/tree/tree-page.component').then((m) => m.TreePageComponent),
       },
       {
         path: 'communities/:id/relationship',
+        canActivate: [communityMemberGuard],
         loadComponent: () =>
           import('./features/relationship/relationship.component').then(
             (m) => m.RelationshipComponent,
@@ -42,8 +45,11 @@ export const routes: Routes = [
       },
       {
         path: '',
-        redirectTo: 'wizard',
         pathMatch: 'full',
+        canActivate: [communityLandingGuard],
+        // Guard always redirects — this component is never rendered
+        loadComponent: () =>
+          import('./features/wizard/user-wizard.component').then((m) => m.UserWizardComponent),
       },
     ],
   },

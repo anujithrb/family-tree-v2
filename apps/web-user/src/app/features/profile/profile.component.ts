@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { switchMap } from 'rxjs';
 import { AuthService } from '../../core/auth/auth.service';
@@ -16,8 +16,18 @@ export class ProfileComponent {
   private readonly auth = inject(AuthService);
   private readonly userApi = inject(UserApiService);
 
-  readonly displayName = signal(this.auth.user()?.displayName ?? '');
+  readonly displayName = signal('');
+
   readonly saving = signal(false);
+
+  constructor() {
+    effect(() => {
+      const user = this.auth.user();
+      if (user && !this.saving()) {
+        this.displayName.set(user.displayName);
+      }
+    });
+  }
   readonly saved = signal(false);
   readonly error = signal<string | null>(null);
 

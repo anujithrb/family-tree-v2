@@ -70,6 +70,12 @@ export class TreeViewerComponent implements OnDestroy {
 
   fitToScreen(): void {
     const svg = this.svgRef()?.nativeElement;
-    if (svg) this.zoomService.resetZoom(svg);
+    const content = this.contentRef()?.nativeElement;
+    if (svg && content) this.zoomService.fitToScreen(svg, content);
+  }
+
+  panTo(x: number, y: number): void {
+    const svg = this.svgRef()?.nativeElement;
+    if (svg) this.zoomService.panTo(svg, x, y);
   }
 }

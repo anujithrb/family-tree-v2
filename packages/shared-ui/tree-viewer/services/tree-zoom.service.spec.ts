@@ -21,4 +21,21 @@ describe('TreeZoomService', () => {
     // After unsubscribe, no more calls — tested via initZoom side-effects in the app
     expect(calls).toHaveLength(0);
   });
+
+  describe('fitToScreen', () => {
+    it('should do nothing when zoomBehavior is not initialized', () => {
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg') as SVGSVGElement;
+      const content = document.createElementNS('http://www.w3.org/2000/svg', 'g') as SVGGElement;
+      // Should not throw even without zoom behavior
+      expect(() => service.fitToScreen(svg, content)).not.toThrow();
+    });
+  });
+
+  describe('panTo', () => {
+    it('should do nothing when zoomBehavior is not initialized', () => {
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg') as SVGSVGElement;
+      // Should not throw even without zoom behavior
+      expect(() => service.panTo(svg, 100, 200)).not.toThrow();
+    });
+  });
 });

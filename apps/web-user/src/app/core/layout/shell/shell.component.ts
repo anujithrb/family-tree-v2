@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from '../header/header.component';
+import { CommunityState } from '../../state/community.state';
 
 @Component({
   selector: 'ft-shell',
@@ -10,5 +11,10 @@ import { HeaderComponent } from '../header/header.component';
   templateUrl: './shell.component.html',
   styleUrl: './shell.component.scss',
 })
-// eslint-disable-next-line @typescript-eslint/no-extraneous-class
-export class ShellComponent {}
+export class ShellComponent implements OnInit {
+  private readonly communityState = inject(CommunityState);
+
+  ngOnInit(): void {
+    this.communityState.loadCommunities().subscribe();
+  }
+}
