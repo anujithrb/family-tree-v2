@@ -8,8 +8,9 @@ import {
 } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { authGuard } from './auth.guard';
+import { authGuard, communityMemberGuard } from './auth.guard';
 import { AuthService } from './auth.service';
+import { CommunityState } from '../state/community.state';
 
 describe('authGuard', () => {
   beforeEach(() => {
@@ -45,5 +46,49 @@ describe('authGuard', () => {
       // eslint-disable-next-line @typescript-eslint/no-base-to-string
       expect(String(result)).toContain('auth/login');
     }
+  });
+});
+
+describe('communityMemberGuard', () => {
+  let router: Router;
+  let communityState: CommunityState;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [
+        provideZonelessChangeDetection(),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideRouter([]),
+        CommunityState,
+      ],
+    });
+    router = TestBed.inject(Router);
+    communityState = TestBed.inject(CommunityState);
+  });
+
+  it('should allow access when user is member of community', () => {
+    communityState.communities.set([{ id: 'c1', name: 'My Fam', createdAt: '2026-01-01' }]);
+    const route = {
+      paramMap: { get: (_key: string) => 'c1' },
+    } as unknown as ActivatedRouteSnapshot;
+
+    const result = TestBed.runInInjectionContext(() =>
+      communityMemberGuard(route, {} as RouterStateSnapshot),
+    );
+    expect(result).toBe(true);
+  });
+
+  it('should redirect to / when user is not member', () => {
+    const createUrlTreeSpy = vi.spyOn(router, 'createUrlTree');
+    communityState.communities.set([{ id: 'c1', name: 'My Fam', createdAt: '2026-01-01' }]);
+    const route = {
+      paramMap: { get: (_key: string) => 'c999' },
+    } as unknown as ActivatedRouteSnapshot;
+
+    void TestBed.runInInjectionContext(() =>
+      communityMemberGuard(route, {} as RouterStateSnapshot),
+    );
+    expect(createUrlTreeSpy).toHaveBeenCalledWith(['/']);
   });
 });
