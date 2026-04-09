@@ -18,12 +18,16 @@ export class ProfileComponent {
 
   readonly displayName = signal('');
 
+  readonly saving = signal(false);
+
   constructor() {
     effect(() => {
-      this.displayName.set(this.auth.user()?.displayName ?? '');
+      const user = this.auth.user();
+      if (user && !this.saving()) {
+        this.displayName.set(user.displayName);
+      }
     });
   }
-  readonly saving = signal(false);
   readonly saved = signal(false);
   readonly error = signal<string | null>(null);
 

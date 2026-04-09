@@ -1,11 +1,15 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideZonelessChangeDetection } from '@angular/core';
+import { provideZonelessChangeDetection, Component } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { HttpTestingController } from '@angular/common/http/testing';
 import { ShellComponent } from './shell.component';
+import { HeaderComponent } from '../header/header.component';
 import { CommunityState } from '../../state/community.state';
+
+@Component({ selector: 'ft-header', standalone: true, template: '' })
+class MockHeaderComponent {}
 
 describe('ShellComponent', () => {
   let fixture: ComponentFixture<ShellComponent>;
@@ -20,7 +24,12 @@ describe('ShellComponent', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
       ],
-    }).compileComponents();
+    })
+      .overrideComponent(ShellComponent, {
+        remove: { imports: [HeaderComponent] },
+        add: { imports: [MockHeaderComponent] },
+      })
+      .compileComponents();
     fixture = TestBed.createComponent(ShellComponent);
     httpMock = TestBed.inject(HttpTestingController);
     await fixture.whenStable();
@@ -48,10 +57,15 @@ describe('ShellComponent', () => {
   });
 
   it('should call loadCommunities on init', () => {
+    // Flush the HTTP request from the first fixture's ngOnInit
+    httpMock.expectOne('/api/communities').flush([]);
+
     const communityState = TestBed.inject(CommunityState);
-    const loadSpy = vi.spyOn(communityState, 'loadCommunities').mockReturnValue(
-      { subscribe: () => {} } as ReturnType<typeof communityState.loadCommunities>,
-    );
+    const loadSpy = vi
+      .spyOn(communityState, 'loadCommunities')
+      .mockReturnValue({ subscribe: () => {} } as ReturnType<
+        typeof communityState.loadCommunities
+      >);
 
     const fixture2 = TestBed.createComponent(ShellComponent);
     fixture2.detectChanges();

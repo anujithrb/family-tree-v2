@@ -14,6 +14,9 @@ class MockWizardShellComponent {
   readonly submitted = output<WizardSubmission>();
 }
 
+@Component({ standalone: true, template: '' })
+class DummyComponent {}
+
 describe('UserWizardComponent', () => {
   let fixture: ComponentFixture<UserWizardComponent>;
   let httpMock: HttpTestingController;
@@ -23,7 +26,7 @@ describe('UserWizardComponent', () => {
       imports: [UserWizardComponent],
       providers: [
         provideZonelessChangeDetection(),
-        provideRouter([]),
+        provideRouter([{ path: 'communities/:id/tree', component: DummyComponent }]),
         provideHttpClient(),
         provideHttpClientTesting(),
       ],
@@ -56,14 +59,9 @@ describe('UserWizardComponent', () => {
 
     fixture.componentInstance.onSubmit(submission);
 
-    const req = httpMock.expectOne('/api/communities/with-tree');
+    const req = httpMock.expectOne('/api/communities');
     expect(req.request.method).toBe('POST');
-    expect(req.request.body).toEqual({
-      name: 'My Family',
-      nodes: submission.nodes,
-      couples: submission.couples,
-      children: submission.children,
-    });
+    expect(req.request.body).toEqual(submission);
     req.flush({ id: 'c1', name: 'My Family', createdAt: new Date().toISOString() });
   });
 });

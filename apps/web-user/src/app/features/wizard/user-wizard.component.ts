@@ -34,21 +34,14 @@ export class UserWizardComponent {
 
   onSubmit(submission: WizardSubmission): void {
     this.error.set(null);
-    this.communityApi
-      .createCommunityWithTree({
-        name: submission.communityName,
-        nodes: submission.nodes,
-        couples: submission.couples,
-        children: submission.children,
-      })
-      .subscribe({
-        next: (community) => {
-          this.communityState.setActive(community.id);
-          void this.router.navigate(['/communities', community.id, 'tree']);
-        },
-        error: () => {
-          this.error.set('Failed to create community. Please try again.');
-        },
-      });
+    this.communityApi.createCommunityWithTree(submission).subscribe({
+      next: (community) => {
+        this.communityState.setActive(community.id);
+        void this.router.navigate(['/communities', community.id, 'tree']);
+      },
+      error: () => {
+        this.error.set('Failed to create community. Please try again.');
+      },
+    });
   }
 }
