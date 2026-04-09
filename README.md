@@ -82,7 +82,17 @@ Once the API server is running, open [http://localhost:3000/api/docs](http://loc
 
 The app uses passwordless magic link auth. In development, the token is returned directly in the API response (in production it would be sent via email).
 
-**Using Swagger UI (easiest):**
+**Quick login (after seeding):**
+
+The seed creates a demo user (Rahul Rajan, `rahul@familytree.local`) with a permanent dev token. Just hit:
+
+```
+GET http://localhost:3000/api/auth/verify/dev-login-token
+```
+
+This returns an `accessToken` and `refreshToken` immediately — no invite step needed. The demo user is the primary admin of "The Rajan Family" community with a 3-generation family tree already set up.
+
+**Using Swagger UI:**
 
 1. Open [http://localhost:3000/api/docs](http://localhost:3000/api/docs)
 2. Expand **Auth > POST /api/auth/invite** and click "Try it out"

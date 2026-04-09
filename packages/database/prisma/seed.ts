@@ -26,6 +26,31 @@ async function main() {
   });
   console.log(`  Admin user: ${adminUser.email} (id: ${adminUser.id})`);
 
+  // Create a demo user (Rahul Rajan — the "self" node)
+  const demoUser = await prisma.user.upsert({
+    where: { email: 'rahul@familytree.local' },
+    update: {},
+    create: {
+      email: 'rahul@familytree.local',
+      displayName: 'Rahul Rajan',
+      status: 'active',
+    },
+  });
+  console.log(`  Demo user: ${demoUser.email} (id: ${demoUser.id})`);
+
+  // Create a magic link for easy dev login (never expires)
+  const devToken = 'dev-login-token';
+  await prisma.magicLink.upsert({
+    where: { token: devToken },
+    update: {},
+    create: {
+      token: devToken,
+      userId: demoUser.id,
+      expiresAt: new Date('2099-12-31'),
+    },
+  });
+  console.log(`  Dev login: GET /api/auth/verify/${devToken}`);
+
   // Create a demo community with a 3-generation family
   const community = await prisma.community.upsert({
     where: { id: 'demo-community-seed' },
@@ -88,6 +113,25 @@ async function main() {
     treeNodes[name] = node.id;
   }
   console.log(`  Created ${Object.keys(treeNodes).length} tree nodes`);
+
+  // Link demo user to their person (Rahul Rajan)
+  await prisma.person.update({
+    where: { id: createdPersons['Rahul Rajan'].id },
+    data: { userId: demoUser.id },
+  });
+
+  // Make demo user the primary admin of the community
+  await prisma.communityAdmin.upsert({
+    where: { treeNodeId: treeNodes['Rahul Rajan'] },
+    update: {},
+    create: {
+      communityId: community.id,
+      userId: demoUser.id,
+      treeNodeId: treeNodes['Rahul Rajan'],
+      role: 'primary',
+    },
+  });
+  console.log(`  Community admin: ${demoUser.displayName} (primary)`);
 
   // Create couples
   // Root couple: Arjun & Priya (gen 0)
