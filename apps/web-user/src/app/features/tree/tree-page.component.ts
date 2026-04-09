@@ -1,5 +1,13 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
 import {
   TreeViewerComponent,
   SidePanelComponent,
@@ -20,7 +28,7 @@ import { TreeApiService } from '../../core/api/tree-api.service';
   templateUrl: './tree-page.component.html',
   styleUrl: './tree-page.component.scss',
 })
-export class TreePageComponent implements OnInit {
+export class TreePageComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   readonly treeState = inject(TreeState);
   private readonly treeApi = inject(TreeApiService);
@@ -28,13 +36,21 @@ export class TreePageComponent implements OnInit {
   readonly panelMode = signal<PanelView>('person-detail');
   readonly bottomSheetState = signal<BottomSheetState>('hidden');
   readonly sidePanelOpen = signal(false);
+  readonly mutationError = signal<string | null>(null);
 
-  private get communityId(): string {
-    return this.route.snapshot.paramMap.get('id') ?? '';
-  }
+  private readonly communityId = signal('');
+  private paramSub?: Subscription;
 
   ngOnInit(): void {
-    this.treeState.loadTree(this.communityId);
+    this.paramSub = this.route.paramMap.subscribe((params) => {
+      const id = params.get('id') ?? '';
+      this.communityId.set(id);
+      this.treeState.loadTree(id);
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.paramSub?.unsubscribe();
   }
 
   onNodeSelected(person: TreePerson): void {
@@ -56,7 +72,8 @@ export class TreePageComponent implements OnInit {
 
   onFormSubmit(data: Record<string, unknown>): void {
     const action = data['action'] as string;
-    const communityId = this.communityId;
+    const communityId = this.communityId();
+    this.mutationError.set(null);
 
     if (action === 'edit') {
       this.treeApi
@@ -67,9 +84,14 @@ export class TreePageComponent implements OnInit {
           deathYear: data['deathYear'] as number | null,
           isDeceased: data['isDeceased'] as boolean,
         })
-        .subscribe(() => {
-          this.treeState.loadTree(communityId);
-          this.onPanelClosed();
+        .subscribe({
+          next: () => {
+            this.treeState.loadTree(communityId);
+            this.onPanelClosed();
+          },
+          error: () => {
+            this.mutationError.set('Failed to update person. Please try again.');
+          },
         });
     } else if (action === 'add-person') {
       this.treeApi
@@ -78,9 +100,14 @@ export class TreePageComponent implements OnInit {
           gender: data['gender'] as string | undefined,
           birthYear: data['birthYear'] as number | undefined,
         })
-        .subscribe(() => {
-          this.treeState.loadTree(communityId);
-          this.onPanelClosed();
+        .subscribe({
+          next: () => {
+            this.treeState.loadTree(communityId);
+            this.onPanelClosed();
+          },
+          error: () => {
+            this.mutationError.set('Failed to add person. Please try again.');
+          },
         });
     }
   }
@@ -88,9 +115,16 @@ export class TreePageComponent implements OnInit {
   onDeleteRequested(): void {
     const node = this.treeState.selectedNode();
     if (!node) return;
-    this.treeApi.deletePerson(this.communityId, node.nodeId).subscribe(() => {
-      this.treeState.loadTree(this.communityId);
-      this.onPanelClosed();
+    const communityId = this.communityId();
+    this.mutationError.set(null);
+    this.treeApi.deletePerson(communityId, node.nodeId).subscribe({
+      next: () => {
+        this.treeState.loadTree(communityId);
+        this.onPanelClosed();
+      },
+      error: () => {
+        this.mutationError.set('Failed to delete person. Please try again.');
+      },
     });
   }
 

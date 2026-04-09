@@ -74,6 +74,41 @@ export class TreeZoomService {
     );
   }
 
+  fitToScreen(svgElement: SVGSVGElement, contentElement: SVGGElement): void {
+    if (!this.zoomBehavior) return;
+
+    const svgWidth = svgElement.clientWidth || svgElement.getBoundingClientRect().width;
+    const svgHeight = svgElement.clientHeight || svgElement.getBoundingClientRect().height;
+    if (svgWidth === 0 || svgHeight === 0) return;
+
+    const bbox = contentElement.getBBox?.();
+    if (!bbox || bbox.width === 0 || bbox.height === 0) {
+      this.resetZoom(svgElement);
+      return;
+    }
+
+    const padding = 40;
+    const scaleX = (svgWidth - padding * 2) / bbox.width;
+    const scaleY = (svgHeight - padding * 2) / bbox.height;
+    const k = Math.min(scaleX, scaleY, 3);
+    const x = svgWidth / 2 - (bbox.x + bbox.width / 2) * k;
+    const y = svgHeight / 2 - (bbox.y + bbox.height / 2) * k;
+
+    this._applyTransform(svgElement, x, y, k);
+  }
+
+  panTo(svgElement: SVGSVGElement, targetX: number, targetY: number): void {
+    if (!this.zoomBehavior) return;
+
+    const svgWidth = svgElement.clientWidth || svgElement.getBoundingClientRect().width;
+    const svgHeight = svgElement.clientHeight || svgElement.getBoundingClientRect().height;
+    const { k } = this._transform;
+    const x = svgWidth / 2 - targetX * k;
+    const y = svgHeight / 2 - targetY * k;
+
+    this._applyTransform(svgElement, x, y, k);
+  }
+
   zoomIn(svgElement: SVGSVGElement): void {
     if (!this.zoomBehavior) return;
     const { x, y, k } = this._transform;
