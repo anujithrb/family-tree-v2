@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/auth/auth.guard';
+import { communityLandingGuard } from './core/auth/community-landing.guard';
 import { ShellComponent } from './core/layout/shell/shell.component';
 
 export const routes: Routes = [
@@ -42,8 +43,11 @@ export const routes: Routes = [
       },
       {
         path: '',
-        redirectTo: 'wizard',
         pathMatch: 'full',
+        canActivate: [communityLandingGuard],
+        // Guard always redirects — this component is never rendered
+        loadComponent: () =>
+          import('./features/wizard/user-wizard.component').then((m) => m.UserWizardComponent),
       },
     ],
   },
