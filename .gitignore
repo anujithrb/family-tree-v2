@@ -23,6 +23,9 @@ uploads/
 # Superpowers
 .superpowers/
 
+# Worktrees
+.worktrees/
+
 # Angular
 .angular/
 .vitest/
